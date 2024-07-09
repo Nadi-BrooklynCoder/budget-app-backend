@@ -2,41 +2,48 @@ const express = require('express');
 const groceries = express.Router();
 const groceryArray = require('../models/grocery');
 
+const groceryObj = groceryArray.reduce((obj, item) => {
+    obj[item.id] = item;
+    return obj;
+}, {});
+
 groceries.get('/', (req, res) => {
-    res.json(groceryArray);
+    res.json(Object.values(groceryObj));
 });
 
-groceries.get('/:arrayIndex', (req, res) => {
-    const { arrayIndex } = req.params;
+groceries.get('/:id', (req, res) => {
+    const { id } = req.params;
 
-    if(groceryArray[arrayIndex]) {
-        res.status(200).json(groceryArray[arrayIndex]);
+    if(groceryObj[id]) {
+        res.status(200).json(groceryObj[id]);
     } else {
         res.status(404).json({ error: "Not Found" });
     };
 });
 
 groceries.post('/', (req, res) => {
-    groceryArray.push(req.body);
-    res.json(groceryArray[groceryArray.length - 1]);
+    const newGroceryItem = req.body;
+    groceryObj[newGroceryItem.id] = newGroceryItem
+    res.json({id: newGroceryItem.id, ...groceryObj[newGroceryItem.id]});
 });
 
-groceries.delete('/:arrayIndex', (req, res) => {
-    const { arrayIndex } = req.params;
+groceries.delete('/:id', (req, res) => {
+    const { id } = req.params;
 
-    if(groceryArray[arrayIndex]) {
-        const deletedGroceryItem = groceryArray.splice(arrayIndex, 1);
-        res.json(deletedGroceryItem[0]);
+    if(groceryObj[id]) {
+        const deletedGroceryItem = groceryObj[id];
+        delete groceryObj[id];
+        res.json(deletedGroceryItem);
     } else {
         res.json({ error: "Grocery Item not found" });
     };
 });
 
-groceries.put('/:arrayIndex', (req, res) => {
-    const { arrayIndex } = req.params;
+groceries.put('/:id', (req, res) => {
+    const { id } = req.params;
 
-    groceryArray[arrayIndex] = req.body;
-    res.status(200).json(groceryArray[arrayIndex]);
+    groceryObj[id] = req.body;
+    res.status(200).json(groceryObj[id]);
 });
 
 module.exports = groceries;
