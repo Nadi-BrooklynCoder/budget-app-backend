@@ -9,7 +9,7 @@ app.use(express.json());
 app.use('/groceries', groceryController);
 
 app.get('/', (req, res) => {
-    res.send('Welcome to your Grocery List.')
-})
+    res.send('Welcome to your Grocery List.');
+});
 
 module.exports = app;
