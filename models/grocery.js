@@ -7,7 +7,7 @@ module.exports = [
         amount: 2.99,
         date: "2024-07-01",
         from: "Grocery Store",
-        category: "Food"
+        category: "Food" 
     },
     {
         id: uuidv4(),
